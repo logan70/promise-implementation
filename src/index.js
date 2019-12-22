@@ -4,7 +4,7 @@ const REJECTED = 'rejected'
 
 const queueMicrotask = typeof window !== 'undefined' ? window.queueMicrotask : process.nextTick
 
-class Promise {
+export default class Promise {
   constructor(excutor) {
     this.state = PENDING
     this.onFulfilledCallbacks = []
@@ -120,15 +120,3 @@ function resolvePromise(promise2, x, resolve, reject){
     resolve(x)
   }
 }
-
-// Adapters to run Promises/A+ Compliance Test Suite
-Promise.defer = Promise.deferred = function () {
-  let dfd = {}
-  dfd.promise = new Promise((resolve, reject) => {
-    dfd.resolve = resolve
-    dfd.reject = reject
-  })
-  return dfd
-}
-
-module.exports = Promise

@@ -4,12 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "promises-aplus-tests src/index.js"
+    "test": "mocha --require @babel/register --bail"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/register": "^7.7.7",
+    "babel-preset-env": "^1.7.0",
+    "mocha": "^6.2.2",
     "promises-aplus-tests": "^2.1.2"
   }
 }
