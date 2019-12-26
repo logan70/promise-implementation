@@ -57,21 +57,46 @@ export default class Promise {
     })
   }
 
-  static all(promises) {
+  static all(iterable) {
     return new Promise((resolve, reject) => {
-      const count = promises.length
-      let resultArr = new Array(count)
-      let fulfilledCount = 0
-      const check = (result, i) => {
-        resultArr[i] = result
-        fulfilledCount++
-        if (fulfilledCount === promises.length) {
-          resolve(resultArr)
+      try {
+        const type = iterable === null ? 'null' : typeof iterable
+        const isObject = iterable !== null && type === 'object'
+        const gen = isObject && (iterable[Symbol.asyncIterator] || iterable[Symbol.iterator])
+        const iterator = typeof gen === 'function' && gen.call(iterable)
+        const isIteratorInvalid = !iterator || typeof iterator !== 'object' || typeof iterator.next !== 'function'
+        if (isIteratorInvalid) {
+          return reject(new TypeError(`${type} is not iterable (cannot read property Symbol(Symbol.iterator))`))
         }
+  
+        let resultArr = []
+        let promisesCount = 0
+        let fulfilledPromisesCount = 0
+  
+        const check = () => {
+          if (promisesCount === fulfilledPromisesCount) {
+            resolve(resultArr)
+          }
+        }
+  
+  
+        while (true) {
+          const { value, done } = iterator.next()
+          if (done) {
+            check()
+            break
+          }
+          const index = promisesCount
+          promisesCount++
+          Promise.resolve(value).then(result => {
+            resultArr[index] = result
+            fulfilledPromisesCount++
+            check()
+          })
+        }
+      } catch (error) {
+        reject(error)
       }
-      promises.forEach((p, i) => {
-        p.then(result => check(result, i), reject)
-      })
     })
   }
 
