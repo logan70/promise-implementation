@@ -28,7 +28,7 @@ export default class Promise {
       })
 
       if (this.state !== PENDING) return next()
-      
+
       this.onFulfilledCallbacks.push(next)
       this.onRejectedCallbacks.push(next)
     })
@@ -44,7 +44,9 @@ export default class Promise {
   }
 
   static resolve(value) {
-    return new Promise(resolve => resolve(value))
+    return new Promise((resolve, reject) => {
+      resolvePromise(null, value, resolve, reject)
+    })
   }
 
   static reject(reason) {
