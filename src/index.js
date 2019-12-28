@@ -94,6 +94,8 @@ export default class Promise {
             resultArr[index] = result
             fulfilledPromisesCount++
             check()
+          }).catch(err => {
+            reject(err)
           })
         }
       } catch (error) {
@@ -118,7 +120,7 @@ export default class Promise {
 }
 
 function resolvePromise(promise2, x, resolve, reject){
-  if(x === promise2){
+  if(promise2 && x === promise2){
     return reject(new TypeError('Chaining cycle detected for promise'))
   }
   let called
