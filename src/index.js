@@ -9,7 +9,13 @@ export default class Promise {
     this.state = PENDING
     this.onFulfilledCallbacks = []
     this.onRejectedCallbacks = []
-    excutor(this._resolve.bind(this), this._reject.bind(this))
+    try {
+      excutor(val => {
+        resolvePromise(this, val, this._resolve.bind(this), this._reject.bind(this))
+      }, this._reject.bind(this))
+    } catch (error) {
+      this._reject(error)
+    }
   }
 
   then(onFulfilled, onRejected) {
