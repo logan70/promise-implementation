@@ -42,7 +42,17 @@ export default class Promise {
   }
 
   catch(handler) {
-    return this.then(v => v, e => handler(e))
+    const promise2 = new Promise((resolve, reject) => {
+      this.then(v => resolve(v), e => {
+        try {
+          const returnVal = handler(e)
+          resolvePromise(promise2, returnVal, resolve, reject)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    })
+    return promise2
   }
 
   finally(handler) {
