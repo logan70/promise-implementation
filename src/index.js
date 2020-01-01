@@ -79,7 +79,7 @@ export default class Promise {
     return new Promise((resolve, reject) => {
       try {
         const type = iterable === null ? 'null' : typeof iterable
-        const isObject = iterable !== null && type === 'object'
+        const isObject = type === 'object'
         const gen = isObject && (iterable[Symbol.asyncIterator] || iterable[Symbol.iterator])
         const iterator = typeof gen === 'function' && gen.call(iterable)
         const isIteratorInvalid = !iterator || typeof iterator !== 'object' || typeof iterator.next !== 'function'
