@@ -49,7 +49,7 @@ describe('Promises.all Test cases', function () {
   it('It is possible to change this behaviour by handling possible rejections', function () {
     return assert.doesNotReject(() => {
       const p1 = new Promise((resolve, reject) => { 
-        setTimeout(() => resolve('p1_delayed_resolution'), 1000) 
+        setTimeout(() => resolve('p1_delayed_resolution'), 100)
       }) 
       
       const p2 = new Promise((resolve, reject) => {
