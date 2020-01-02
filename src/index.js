@@ -69,12 +69,6 @@ export default class Promise {
     return new Promise((_, reject) => reject(reason))
   }
 
-  static race(promises) {
-    return new Promise((resolve, reject) => {
-      promises.forEach(p => p.then(resolve, reject))
-    })
-  }
-
   static all(iterable) {
     return new Promise((resolve, reject) => {
       try {
@@ -110,6 +104,35 @@ export default class Promise {
             resultArr[index] = result
             fulfilledPromisesCount++
             check()
+          }).catch(err => {
+            reject(err)
+          })
+        }
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
+  static race(iterable) {
+    return new Promise((resolve, reject) => {
+      try {
+        const type = iterable === null ? 'null' : typeof iterable
+        const isObject = type === 'object'
+        const gen = isObject && (iterable[Symbol.asyncIterator] || iterable[Symbol.iterator])
+        const iterator = typeof gen === 'function' && gen.call(iterable)
+        const isIteratorInvalid = !iterator || typeof iterator !== 'object' || typeof iterator.next !== 'function'
+        if (isIteratorInvalid) {
+          return reject(new TypeError(`${type} is not iterable (cannot read property Symbol(Symbol.iterator))`))
+        }
+
+        while (true) {
+          const { value, done } = iterator.next()
+          if (done) {
+            break
+          }
+          Promise.resolve(value).then(result => {
+            resolve(result)
           }).catch(err => {
             reject(err)
           })
