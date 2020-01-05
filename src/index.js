@@ -56,7 +56,15 @@ export default class Promise {
   }
 
   finally(handler) {
-    return this.then(() => handler(), () => handler())
+    const wrapperHandler = () => {
+      try {
+        const result = handler()
+        return result
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    }
+    return this.then(wrapperHandler, wrapperHandler)
   }
 
   static resolve(value) {
@@ -90,8 +98,7 @@ export default class Promise {
             resolve(resultArr)
           }
         }
-  
-  
+
         while (true) {
           const { value, done } = iterator.next()
           if (done) {
